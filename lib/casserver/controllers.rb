@@ -225,6 +225,12 @@ module CASServer::Controllers
       tgt = CASServer::Models::TicketGrantingTicket.find_by_ticket(cookies['tgt'])
       
       cookies.delete 'tgt'
+
+      $AUTH.each do |auth|
+        if auth.respond_to?(:logout)
+          auth.logout(tgt.extra_attributes)
+        end
+      end
       
       if tgt
         CASServer::Models::TicketGrantingTicket.transaction do

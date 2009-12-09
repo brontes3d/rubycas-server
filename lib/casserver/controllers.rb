@@ -225,14 +225,14 @@ module CASServer::Controllers
       tgt = CASServer::Models::TicketGrantingTicket.find_by_ticket(cookies['tgt'])
       
       cookies.delete 'tgt'
-
-      $AUTH.each do |auth|
-        if auth.respond_to?(:logout)
-          auth.logout(tgt.extra_attributes)
-        end
-      end
       
       if tgt
+        $AUTH.each do |auth|
+          if auth.respond_to?(:logout)
+            auth.logout(tgt.extra_attributes)
+          end
+        end
+        
         CASServer::Models::TicketGrantingTicket.transaction do
           $LOG.debug("Deleting Service/Proxy Tickets for '#{tgt}' for user '#{tgt.username}'")
           tgt.granted_service_tickets.each do |st|

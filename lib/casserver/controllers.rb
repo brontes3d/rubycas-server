@@ -228,7 +228,7 @@ module CASServer::Controllers
       
       if tgt
         $AUTH.each do |auth|
-          if auth.respond_to?(:logout)
+          if auth.respond_to?(:logout) && tgt
             auth.logout(tgt.extra_attributes)
           end
         end

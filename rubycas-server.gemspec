@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{brontes3d-rubycas-server}
-  s.version = "0.8.0.20091208"
+  s.version = "0.8.0.20100111"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matt Zukowski"]

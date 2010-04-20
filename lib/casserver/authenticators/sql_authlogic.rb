@@ -1,4 +1,4 @@
-require 'casserver/authenticators/base'
+require 'casserver/authenticators/sql'
 
 # These were pulled directly from Authlogic, and new ones can be added
 # just by including new Crypto Providers
@@ -15,15 +15,15 @@ rescue LoadError
   require 'active_record'
 end
 
-# This is a version of the SQL authenticator that works nicely with Authlogic. 
-# Passwords are encrypted the same way as it done in Authlogic. 
-# Before use you this, you MUST configure rest_auth_digest_streches and rest_auth_site_key in 
-# config. 
+# This is a version of the SQL authenticator that works nicely with Authlogic.
+# Passwords are encrypted the same way as it done in Authlogic.
+# Before use you this, you MUST configure rest_auth_digest_streches and rest_auth_site_key in
+# config.
 #
 # Using this authenticator requires restful authentication plugin on rails (client) side.
 #
 # * git://github.com/binarylogic/authlogic.git
-# 
+#
 # Usage:
 
 # authenticator:
@@ -40,21 +40,21 @@ end
 #   salt_column: password_salt
 #   encryptor: BCrypt
 #
-class CASServer::Authenticators::SQLAuthlogic < CASServer::Authenticators::Base
+class CASServer::Authenticators::SQLAuthlogic < CASServer::Authenticators::SQL
 
   def validate(credentials)
     read_standard_credentials(credentials)
-    
-    raise CASServer::AuthenticatorError, "Cannot validate credentials because the authenticator hasn't yet been configured" unless @options
-    raise CASServer::AuthenticatorError, "Invalid authenticator configuration!" unless @options[:database]
-    
-    CASUser.establish_connection @options[:database]
-    CASUser.set_table_name @options[:user_table] || "users"
-    
+    raise_if_not_configured
+
+    user_model = self.class.user_model
+
     username_column = @options[:username_column] || "login"
     password_column = @options[:password_column] || "crypted_password"
     salt_column = @options[:salt_column]
-    results = CASUser.find(:all, :conditions => ["#{username_column} = ?", @username])
+
+    $LOG.debug "#{self.class}: [#{user_model}] " + "Connection pool size: #{user_model.connection_pool.instance_variable_get(:@checked_out).length}/#{user_model.connection_pool.instance_variable_get(:@connections).length}"
+    results = user_model.find(:all, :conditions => ["#{username_column} = ?", @username])
+    user_model.connection_pool.checkin(user_model.connection)
 
     begin
       encryptor = eval("Authlogic::CryptoProviders::" + @options[:encryptor] || "Sha512")
@@ -72,17 +72,10 @@ class CASServer::Authenticators::SQLAuthlogic < CASServer::Authenticators::Base
         if results.size > 1
           $LOG.warn("#{self.class}: Unable to extract extra_attributes because multiple matches were found for #{@username.inspect}")
         else
-          
-          @extra_attributes = {}
-          extra_attributes_to_extract.each do |col|
-            @extra_attributes[col] = user.send(col)
-          end
-          
-          if @extra_attributes.empty?
-            $LOG.warn("#{self.class}: Did not read any extra_attributes for user #{@username.inspect} even though an :extra_attributes option was provided.")
-          else
-            $LOG.debug("#{self.class}: Read the following extra_attributes for user #{@username.inspect}: #{@extra_attributes.inspect}")
-          end
+
+          extract_extra(user)
+              log_extra
+
         end
       end
 
@@ -90,8 +83,5 @@ class CASServer::Authenticators::SQLAuthlogic < CASServer::Authenticators::Base
     else
       return false
     end
-  end
-
-  class CASUser < ActiveRecord::Base
   end
 end

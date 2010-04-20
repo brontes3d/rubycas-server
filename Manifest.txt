@@ -3,7 +3,7 @@ History.txt
 LICENSE.txt
 Manifest.txt
 PostInstall.txt
-README.txt
+README.rdoc
 Rakefile
 bin/rubycas-server
 bin/rubycas-server-ctl
@@ -28,10 +28,15 @@ lib/casserver/authenticators/test.rb
 lib/casserver/cas.rb
 lib/casserver/conf.rb
 lib/casserver/controllers.rb
+lib/casserver/erb.rb
 lib/casserver/load_picnic.rb
 lib/casserver/localization.rb
 lib/casserver/models.rb
 lib/casserver/postambles.rb
+lib/casserver/template/erb/layout.html.erb
+lib/casserver/template/erb/login.html.erb
+lib/casserver/template/erb/login_form.html.erb
+lib/casserver/template/erb/logout.html.erb
 lib/casserver/utils.rb
 lib/casserver/version.rb
 lib/casserver/views.rb
@@ -44,6 +49,7 @@ locale/ja_JP/LC_MESSAGES/rubycas-server.mo
 locale/pl_PL/LC_MESSAGES/rubycas-server.mo
 locale/pt_BR/LC_MESSAGES/rubycas-server.mo
 locale/ru_RU/LC_MESSAGES/rubycas-server.mo
+locale/zh_TW/LC_MESSAGES/rubycas-server.mo
 po/de_DE/rubycas-server.po
 po/es_ES/rubycas-server.po
 po/fr_FR/rubycas-server.po
@@ -51,6 +57,7 @@ po/ja_JP/rubycas-server.po
 po/pl_PL/rubycas-server.po
 po/pt_BR/rubycas-server.po
 po/ru_RU/rubycas-server.po
+po/zh_TW/rubycas-server.po
 po/rubycas-server.pot
 public/themes/cas.css
 public/themes/notice.png

@@ -1,4 +1,6 @@
 
+require 'active_support'
+
 conf_defaults = {
   :maximum_unused_login_ticket_lifetime => 5.minutes,
   :maximum_unused_service_ticket_lifetime => 5.minutes, # CAS Protocol Spec, sec. 3.2.1 (recommended expiry time)
@@ -30,17 +32,14 @@ unless $CONF[:authenticator]
     your config file.
 
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	"
-  raise Picnic::Config::Error, err
+  "
+  raise Picnic::Conf::Error, err
 end
 
 begin
   # attempt to instantiate the authenticator
-  if $CONF[:authenticator].instance_of? Array
-    $CONF[:authenticator].each { |authenticator| $AUTH << authenticator[:class].constantize.new}
-  else
-    $AUTH << $CONF[:authenticator][:class].constantize.new
-  end
+  $CONF[:authenticator] = [$CONF[:authenticator]] unless $CONF[:authenticator].instance_of? Array
+  $CONF[:authenticator].each { |authenticator| $AUTH << authenticator[:class].constantize}
 rescue NameError
   if $CONF[:authenticator].instance_of? Array
     $CONF[:authenticator].each do |authenticator|
@@ -52,7 +51,7 @@ rescue NameError
         auth_rb = authenticator[:class].underscore.gsub('cas_server/', '')
         require 'casserver/'+auth_rb
       end
-      $AUTH << authenticator[:class].constantize.new
+      $AUTH << authenticator[:class].constantize
     end
   else
     if $CONF[:authenticator][:source]
@@ -64,7 +63,8 @@ rescue NameError
       require 'casserver/'+auth_rb
     end
 
-    $AUTH << $CONF[:authenticator][:class].constantize.new
+    $AUTH << $CONF[:authenticator][:class].constantize
+    $CONF[:authenticator] = [$CONF[:authenticator]]
   end
 end
 

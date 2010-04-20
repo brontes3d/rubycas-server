@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matt Zukowski"]
-  s.date = %q{2009-05-06}
+  s.date = %q{2010-02-02}
   s.description = %q{Provides single sign-on authentication for web applications using the CAS protocol.}
   s.email = ["matt@zukowski.ca"]
   s.executables = ["rubycas-server", "rubycas-server-ctl"]
@@ -36,7 +36,7 @@ build the LOCALE_LC files.
       s.add_runtime_dependency(%q<activesupport>, [">= 0"])
       s.add_runtime_dependency(%q<activerecord>, [">= 0"])
       s.add_runtime_dependency(%q<gettext>, [">= 0"])
-      s.add_runtime_dependency(%q<picnic>, [">= 0.7.999"])
+      s.add_runtime_dependency(%q<picnic>, [">= 0.8.1.20100201"])
       s.add_development_dependency(%q<hoe>, [">= 1.8.2"])
     else
       s.add_dependency(%q<activesupport>, [">= 0"])

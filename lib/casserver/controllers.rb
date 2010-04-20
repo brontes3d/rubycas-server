@@ -241,7 +241,8 @@ module CASServer::Controllers
       cookies.delete 'tgt'
 
       if tgt
-        $AUTH.each do |auth|
+        $AUTH.each do |auth_class|
+          auth = auth_class.new
           if auth.respond_to?(:logout) && tgt
             auth.logout(tgt.extra_attributes)
           end

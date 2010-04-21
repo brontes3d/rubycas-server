@@ -122,7 +122,7 @@ module CASServer::Controllers
 
       # generate another login ticket to allow for re-submitting the form after a post
       @lt = generate_login_ticket.ticket
-
+      
       $LOG.debug("Logging in with username: #{@username}, lt: #{@lt}, service: #{@service}, auth: #{$AUTH}")
 
       credentials_are_valid = false

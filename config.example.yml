@@ -1,5 +1,5 @@
 # IMPORTANT NOTE ABOUT YAML CONFIGURATION FILES
-# ---> Be sure to use spaces instead of tabs for indentation. YAML is
+# ---> Be sure to use spaces instead of tabs for indentation. YAML is 
 #      white-space sensitive!
 
 ##### SERVER SETUP ################################################################
@@ -151,6 +151,9 @@ ssl_cert: /path/to/your/ssl.pem
 ##### DATABASE #################################################################
 
 # Set up the database connection. Make sure that this database is secure!
+# 
+# By default, we use MySQL, since it is widely used and does not require any 
+# additional ruby libraries besides ActiveRecord.
 #
 # By default, we use MySQL, since it is widely used and does not require any
 # additional ruby libraries besides ActiveRecord.
@@ -168,7 +171,7 @@ database:
 
 # IMPORTANT! By default, the server can handle up to ~5 concurrent requests
 # (without queuing). You can increase this by setting the database connection
-# pool size to a higher number. For example, to handle up to ~10 concurrent
+# pool size to a higher number. For example, to handle up to ~10 concurrent 
 # requests:
 #
 #database:
@@ -176,7 +179,7 @@ database:
 #  adapter: mysql
 #  database: casserver
 #  username: root
-#  password:
+#  password: 
 #  host: localhost
 
 #

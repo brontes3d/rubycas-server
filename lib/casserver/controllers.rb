@@ -159,7 +159,7 @@ module CASServer::Controllers
       end
       
       if @service.blank?
-        puts "service was blank. will redirect to default service"
+        $LOG.info("service was blank. will redirect to default service")
         @service = $CONF.default_service_redirect # provide default redirect. no more logging in and seeing the login page again
       end
 

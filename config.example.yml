@@ -43,6 +43,8 @@ ssl_cert: /path/to/your/ssl.pem
 #  ssl_cert: ssl/cert.pem
 #  ssl_key: ssl/key.pem
 
+# By default if no service param is specified, the user will end up back on the login page. If you want them to be redirected to another site use the following.
+# default_service_redirect: "http://localhost:3001"
 
 # By default the login page will be available at the root path
 # (e.g. https://login.example.net/). The uri_path option lets you serve it from a

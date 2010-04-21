@@ -47,7 +47,7 @@ module CASServer::Controllers
           elsif @gateway
             $LOG.info("Redirecting unauthenticated gateway request to service '#{@service}'.")
             return redirect(@service, :status => 303)
-          end
+          end          
         elsif @gateway
             $LOG.error("This is a gateway request but no service parameter was given!")
             @message = {:type => 'mistake',
@@ -156,6 +156,11 @@ module CASServer::Controllers
         $LOG.error(e)
         @message = {:type => 'mistake', :message => e.to_s}
         return render(:login)
+      end
+      
+      if @service.blank?
+        puts "service was blank. will redirect to default service"
+        @service = $CONF.default_service_redirect # provide default redirect. no more logging in and seeing the login page again
       end
 
       if credentials_are_valid

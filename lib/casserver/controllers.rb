@@ -142,7 +142,8 @@ module CASServer::Controllers
             :username => @username,
             :password => @password,
             :service => @service,
-            :request => @env
+            :request => @env,
+            :action => self
           )
           if credentials_are_valid
             extra_attributes.merge!(auth.extra_attributes) unless auth.extra_attributes.blank?

@@ -22,19 +22,17 @@ module CASServer::Controllers
       @service = clean_service_url(input['service'])
       @renew = input['renew']
       @gateway = input['gateway'] == 'true' || input['gateway'] == '1'
-
+      @message = {:message => input['message'], :type => "notice"} if input.key?("message")
       if tgc = cookies['tgt']
         tgt, tgt_error = validate_ticket_granting_ticket(tgc)
       end
 
       if tgt and !tgt_error
-        @message = {:type => 'notice',
-          :message => _("You are currently logged in as '%s'. If this is not you, please log in below.") % tgt.username }
+        @message = {:type => 'notice', :message => _("You are currently logged in as '%s'. If this is not you, please log in below.") % tgt.username }
       end
 
       if input['redirection_loop_intercepted']
-        @message = {:type => 'mistake',
-          :message => _("The client and server are unable to negotiate authentication. Please try logging in again later.")}
+        @message = {:type => 'mistake', :message => _("The client and server are unable to negotiate authentication. Please try logging in again later.")}
       end
 
       begin
@@ -64,8 +62,6 @@ module CASServer::Controllers
       $LOG.debug("Rendering login form with lt: #{lt}, service: #{@service}, renew: #{@renew}, gateway: #{@gateway}")
 
       @lt = lt.ticket
-
-      #$LOG.debug(env)
 
       # If the 'onlyLoginForm' parameter is specified, we will only return the
       # login form part of the page. This is useful for when you want to
@@ -159,7 +155,7 @@ module CASServer::Controllers
         return render(:login)
       end
       
-      if @service.blank?
+      if @service.blank? and $CONF.default_service_redirect
         $LOG.info("service was blank. will redirect to default service")
         @service = $CONF.default_service_redirect # provide default redirect. no more logging in and seeing the login page again
       end
@@ -190,7 +186,7 @@ module CASServer::Controllers
         end
       else
         $LOG.warn("Invalid credentials given for user '#{@username}'")
-        @message = {:type => 'mistake', :message => _("Incorrect username or password.")}
+        @message = {:type => 'mistake', :message => _("Incorrect username or password.")} unless @message
         @status = 401
       end
 
@@ -250,7 +246,7 @@ module CASServer::Controllers
         $AUTH.each do |auth_class|
           auth = auth_class.new
           if auth.respond_to?(:logout) && tgt
-            auth.logout(tgt.extra_attributes)
+            auth.logout((tgt.extra_attributes || {}).merge(:service => @service, :action => self))
           end
         end
         
@@ -280,10 +276,11 @@ module CASServer::Controllers
       else
         $LOG.warn("User tried to log out without a valid ticket-granting ticket.")
       end
-
-      @message = {:type => 'confirmation', :message => _("You have successfully logged out.")}
-
-      @message[:message] +=_(" Please click on the following link to continue:") if @continue_url
+      
+      unless @message
+        @message = {:type => 'confirmation', :message => _("You have successfully logged out.")}
+        @message[:message] +=_(" Please click on the following link to continue:") if @continue_url
+      end
 
       @lt = generate_login_ticket
 

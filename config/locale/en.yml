@@ -1,0 +1,10 @@
+en:
+  browser_compatability_message: 
+    download_links: "Please download <a href=\"http://getfirefox.com/\">Mozilla Firefox</a> or <a href=\"http://www.apple.com/safari/\">Apple Safari</a> to use this application."
+    note: "NOTE: 3M internal and laboratory users, the web browser you are using is not fully supported by Case Manager."
+  login_button_label: "Log in"  
+  forgot_password: "Forgot Password"
+  noscript_enable_javascript: "You must enable JavaScript in your browser in order to use {{system_name}}."
+  username: "Username"
+  password: "Password"
+  language_and_region: "Language and Region"

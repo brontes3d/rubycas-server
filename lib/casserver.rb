@@ -20,23 +20,24 @@ Camping.goes :CASServer
 
 Picnic::Logger.init_global_logger!
 
+module CASServer
+  # Release database connections back to the pool after each request.
+  # This is necessary to prevent the connection pool from filling up with
+  # hanging connections (Rails does this automatically, but Camping does not).
+  
+  def service(*a)
+    r = super(*a)
+    ActiveRecord::Base.clear_active_connections!
+    r
+  end
+end
+
 require "casserver/utils"
 require "casserver/models"
 require "casserver/cas"
 require "casserver/views"
 require "casserver/controllers"
 require "casserver/localization"
-
-module CASServer
-  # Release database connections back to the pool after each request.
-  # This is necessary to prevent the connection pool from filling up with
-  # hanging connections (Rails does this automatically, but Camping does not).
-  def service(*a)
-    r = super
-    ActiveRecord::Base.clear_active_connections!
-    return r
-  end
-end
 
 def CASServer.create
   $LOG.info "Creating RubyCAS-Server with pid #{Process.pid}."

@@ -1,30 +1,52 @@
-require "gettext"
-require "gettext/cgi"
+require 'i18n'
+# tell the I18n library where to find your translations
+I18n.load_path << Dir[ File.expand_path(File.join($APP_ROOT, 'config', 'locale', '*.yml')) ]
+p I18n.load_path
+# set default locale to something other than :en
+I18n.default_locale = $CONF[:default_locale]
+
+# module I18n
+#   class << self
+#     def available_locales; backend.available_locales; end
+#   end
+#   module Backend
+#     class Simple
+#       def available_locales
+#         translations.keys.collect { |l| l.to_s }.sort
+#       end
+#     end
+#   end
+# end
+
+# You need to "force-initialize" loaded locales
+I18n.backend.send(:init_translations)
 
 module CASServer
-  include GetText
-  bindtextdomain("rubycas-server", :path => File.join(File.dirname(File.expand_path(__FILE__)), "../../locale"))
-
+  
+  AVAILABLE_LOCALES = I18n.backend.available_locales
+  $LOG.debug "* Loaded #{I18n.backend} locales: #{AVAILABLE_LOCALES.inspect}"
+  def available_locales; AVAILABLE_LOCALES; end
+  
   def service(*a)
-    GetText.locale = determine_locale
-    #puts GetText.locale.inspect
-    super(*a)
+    r = super(*a)
+    I18n.locale = determine_locale
+    r
   end
-
+  
   def determine_locale
-
+  
     source = nil
-    lang = case
-    when !input['lang'].blank?
-      source = "'lang' request variable"
-      cookies['lang'] = input['lang']
-      input['lang']
-    when !cookies['lang'].blank?
-      source = "'lang' cookie"
-      cookies['lang']
+    locale = case
+    when !input['locale'].blank?
+      source = "'locale' request variable"
+      cookies['locale'] = input['locale']
+      input['locale']
+    when !cookies['locale'].blank?
+      source = "'locale' cookie"
+      cookies['locale']
     when !@env['HTTP_ACCEPT_LANGUAGE'].blank?
       source = "'HTTP_ACCEPT_LANGUAGE' header"
-      lang = @env['HTTP_ACCEPT_LANGUAGE']
+      locale = @env['HTTP_ACCEPT_LANGUAGE']
     when !@env['HTTP_USER_AGENT'].blank? && @env['HTTP_USER_AGENT'] =~ /[^a-z]([a-z]{2}(-[a-z]{2})?)[^a-z]/i
       source = "'HTTP_USER_AGENT' header"
       $~[1]
@@ -35,49 +57,34 @@ module CASServer
       source = "default"
       "en"
     end
-
-    $LOG.debug "Detected locale is #{lang.inspect} (from #{source})"
-
-    lang.gsub!('_','-')
-
+  
+    $LOG.debug "Detected locale is #{locale.inspect} (from #{source})"
+  
+    locale.gsub!('_','-')
+  
     # TODO: Need to confirm that this method of splitting the accepted
     #       language string is correct.
-    if lang =~ /[,;\|]/
-      langs = lang.split(/[,;\|]/)
+    if locale =~ /[,;\|]/
+      locales = locale.split(/[,;\|]/)
     else
-      langs = [lang]
+      locales = [locale]
     end
-
+  
     # TODO: This method of selecting the desired language might not be
     #       standards-compliant. For example, http://www.w3.org/TR/ltli/
     #       suggests that de-de and de-*-DE might be acceptable identifiers
     #       for selecting various wildcards. The algorithm below does not
-    #       currently support anything like this.
-
-    available = available_locales
-
+    #       currently support anything like this.  
     # Try to pick a locale exactly matching the desired identifier, otherwise
     # fall back to locale without region (i.e. given "en-US; de-DE", we would
-    # first look for "en-US", then "en", then "de-DE", then "de").
-
-    chosen_lang = nil
-    langs.each do |l|
-      a = available.find{ |a| a =~ Regexp.new("\\A#{l}\\Z", 'i') ||
-                              a =~ Regexp.new("#{l}-\w*",   'i')    }
-      if a
-        chosen_lang = a
-        break
-      end
-    end
-
-    chosen_lang = "en" if chosen_lang.blank?
-
-    $LOG.debug "Chosen locale is #{chosen_lang.inspect}"
-
-    return chosen_lang
+    # first look for "en-US", then "en", then "de-DE", then "de").  
+    chosen_locale = nil
+    locales.each do |l|
+      break if chosen_locale = available_locales.find{|a| a =~ Regexp.new("\\A#{l}\\Z", 'i') || a =~ Regexp.new("#{l}-\w*", 'i')}
+    end  
+    chosen_locale ||= "en"  
+    $LOG.debug "Chosen locale is #{chosen_locale.inspect}"  
+    return chosen_locale.to_sym
   end
-
-  def available_locales
-    (Dir.glob(File.join(File.dirname(File.expand_path(__FILE__)), "../../locale/[a-z]*")).map{|path| File.basename(path)} << "en").uniq.collect{|l| l.gsub('_','-')}
-  end
+  
 end

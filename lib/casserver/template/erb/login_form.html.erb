@@ -1,8 +1,8 @@
-<form method="post" action="<%= @form_action || self/'/login' %>" id="login-form" onsubmit="submitbutton = document.getElementById('login-submit'); submitbutton.value='<%= _("Please wait...") %>'; submitbutton.disabled=true; return true;">
+<form method="post" action="<%= @form_action || self/'/login' %>" id="login-form" onsubmit="submitbutton = document.getElementById('login-submit'); submitbutton.value='<%= I18n.t("please_wait") %>'; submitbutton.disabled=true; return true;">
   <table id="form-layout">
     <tr>
       <td id="username-label-container">
-        <label for="username" id="username-label"><%= _('Username') %></label>
+        <label for="username" id="username-label"><%= I18n.t('username') %></label>
       </td>
       <td id="username-container">
         <input type="text" accesskey="u" tabindex="1" size="32" name="username" id="username"/>
@@ -10,7 +10,7 @@
     </tr>
     <tr>
       <td id="password-label-container">
-        <label for="password" id="password-label"><%= _('Password') %></label>
+        <label for="password" id="password-label"><%= I18n.t('password') %></label>
       </td>
       <td id="password-container">
         <input type="password" autocomplete="off" accesskey="p" tabindex="2" size="32" name="password" id="password"/>
@@ -19,7 +19,7 @@
     <% if $CONF['remember_me_session_life_time'] -%>
     <tr>
       <td id="remember-me-containter" colspan="2">
-        <label for="remember-me" id="remember-me-label"><%= _('Remeber me on this computer') %></label>
+        <label for="remember-me" id="remember-me-label"><%= I18n.t("remember_me") %></label>
         <input type="checkbox" name="remember-me" id="remember-me"/>
       </td>
     </tr>
@@ -28,7 +28,7 @@
       <td></td>
       <td id="submit-container">
         <input type="hidden" value="<%= @lt %>" name="lt" id="lt"/>
-        <input type="hidden" value="<%= @service %>" name="service" id="service"/><input type="submit" class="button" value="<%= _("LOGIN") %>" accesskey="l" tabindex="4" id="login-submit"/>
+        <input type="hidden" value="<%= @service %>" name="service" id="service"/><input type="submit" class="button" value="<%= I18n.t("login_button_label") %>" accesskey="l" tabindex="4" id="login-submit"/>
       </td>
     </tr>
     <% if @include_infoline %>

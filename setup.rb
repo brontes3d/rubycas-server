@@ -800,7 +800,7 @@ class ToplevelInstaller
   end
 
   def inspect
-    "#<#{self.class} #{__id__()}>"
+    "#<#{self.class} #{__id__}>"
   end
 
   def invoke

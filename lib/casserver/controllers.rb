@@ -28,11 +28,11 @@ module CASServer::Controllers
       end
 
       if tgt and !tgt_error
-        @message = {:type => 'notice', :message => _("You are currently logged in as '%s'. If this is not you, please log in below.") % tgt.username }
+        @message = {:type => 'notice', :message => I18n.t("already_logged_in") % tgt.username }
       end
 
       if input['redirection_loop_intercepted']
-        @message = {:type => 'mistake', :message => _("The client and server are unable to negotiate authentication. Please try logging in again later.")}
+        @message = {:type => 'mistake', :message => I18n.t("redirection_loop_intercepted")}
       end
 
       begin
@@ -48,13 +48,11 @@ module CASServer::Controllers
           end          
         elsif @gateway
             $LOG.error("This is a gateway request but no service parameter was given!")
-            @message = {:type => 'mistake',
-              :message => _("The server cannot fulfill this gateway request because no service parameter was given.")}
+            @message = {:type => 'mistake', :message => I18n.t("no_service")}
         end
       rescue URI::InvalidURIError
         $LOG.error("The service '#{@service}' is not a valid URI!")
-        @message = {:type => 'mistake',
-          :message => _("The target service your browser supplied appears to be invalid. Please contact your system administrator for help.")}
+        @message = {:type => 'mistake', :message => I18n.t("invalid_service")}
       end
 
       lt = generate_login_ticket
@@ -81,7 +79,7 @@ module CASServer::Controllers
           render :login_form
         else
           @status = 500
-          _("Could not guess the CAS login URI. Please supply a submitToURI parameter with your request.")
+          I18n.t("service_guess_failed")
         end
       else
         render :login
@@ -170,7 +168,7 @@ module CASServer::Controllers
 
         if @service.blank?
           $LOG.info("Successfully authenticated user '#{@username}' at '#{tgt.client_hostname}'. No service param was given, so we will not redirect.")
-          @message = {:type => 'confirmation', :message => _("You have successfully logged in.")}
+          @message = {:type => 'confirmation', :message => I18n.t("login_success")}
         else
           @st = generate_service_ticket(@service, @username, tgt)
           begin
@@ -181,12 +179,12 @@ module CASServer::Controllers
           rescue URI::InvalidURIError
             $LOG.error("The service '#{@service}' is not a valid URI!")
             @message = {:type => 'mistake',
-              :message => _("The target service your browser supplied appears to be invalid. Please contact your system administrator for help.")}
+              :message => I18n.t("invalid_service")}
           end
         end
       else
         $LOG.warn("Invalid credentials given for user '#{@username}'")
-        @message = {:type => 'mistake', :message => _("Incorrect username or password.")} unless @message
+        @message = {:type => 'mistake', :message => I18n.t("invalid_credentials")} unless @message
         @status = 401
       end
 
@@ -278,8 +276,8 @@ module CASServer::Controllers
       end
       
       unless @message
-        @message = {:type => 'confirmation', :message => _("You have successfully logged out.")}
-        @message[:message] +=_(" Please click on the following link to continue:") if @continue_url
+        @message = {:type => 'confirmation', :message => I18n.t("logged_out")}
+        @message[:message] +=I18n.t("click_to_continue") if @continue_url
       end
 
       @lt = generate_login_ticket
@@ -430,7 +428,7 @@ module CASServer::Controllers
       CASServer::Utils::log_controller_action(self.class, input)
       $LOG.error("Tried to use login ticket dispenser with get method!")
       @status = 422
-      _("To generate a login ticket, you must make a POST request.")
+      I18n.t("get_to_ticket_dispenser")
     end
 
     # Renders a page with a login ticket (and only the login ticket)

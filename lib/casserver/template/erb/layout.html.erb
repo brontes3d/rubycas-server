@@ -3,7 +3,7 @@
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-    <title><%= "#{organization} #{_(' Central Login')}" %></title>
+    <title><%= "#{organization} #{I18n.t('central_login')}" %></title>
     <link type="text/css" href="<%= self/'/themes/cas.css' %>" rel="stylesheet"/>
     <link type="text/css" href="<%= self/"/themes/#{current_theme}/theme.css" %>" rel="stylesheet"/>
     <% if File.exists?("#{$APP_ROOT}/public/themes/#{current_theme}/favicon.png") %>

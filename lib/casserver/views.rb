@@ -14,7 +14,7 @@ module CASServer::Views
     if @use_layout
       xhtml_strict do
         head do
-          title { "#{organization} #{_(' Central Login')}" }
+          title { "#{organization} #{I18n.t('central_login')}" }
           link(:rel => "stylesheet", :type => "text/css", :href => "/themes/cas.css")
           link(:rel => "stylesheet", :type => "text/css", :href => "/themes/#{current_theme}/theme.css")
           link(:rel => "icon", :type => "image/png", :href => "/themes/#{current_theme}/favicon.png") if
@@ -40,7 +40,7 @@ module CASServer::Views
         td(:colspan => 2) do
           div(:id => "headline-container") do
             strong organization
-            text _(" Central Login")
+            text I18n.t("central_login")
           end
         end
       end
@@ -65,13 +65,13 @@ module CASServer::Views
 
   # Just the login form.
   def login_form
-    submitbutton = _("Please wait...")
+    submitbutton = I18n.t("please_wait")
     form(:method => "post", :action => @form_action || '/login', :id => "login-form",
          :onsubmit => "submitbutton = document.getElementById('login-submit'); submitbutton.value='#{submitbutton}'; submitbutton.disabled=true; return true;") do
       table(:id => "form-layout") do
         tr do
           td(:id => "username-label-container") do
-            label(:id => "username-label", :for => "username") { _( "Username" ) }
+            label(:id => "username-label", :for => "username") { I18n.t( "username" ) }
           end
           td(:id => "username-container") do
             input(:type => "text", :id => "username", :name => "username",
@@ -80,7 +80,7 @@ module CASServer::Views
         end
         tr do
           td(:id => "password-label-container") do
-            label(:id => "password-label", :for => "password") { _( "Password" ) }
+            label(:id => "password-label", :for => "password") { I18n.t( "password" ) }
           end
           td(:id => "password-container") do
             input(:type => "password", :id => "password", :name => "password",
@@ -89,7 +89,7 @@ module CASServer::Views
         end
         tr do
           td(:id => 'remember-me-containter', :colspan => "2") do
-            label(:id => "remember-me-label", :for => "remember-me"){ _( "Remeber me on this computer" ) }
+            label(:id => "remember-me-label", :for => "remember-me"){ I18n.t( "remember_me" ) }
             input(:type => "checkbox", :id => "remember-me", :name => "remember-me")
           end
         end if $CONF['remember_me_session_life_time']
@@ -98,7 +98,7 @@ module CASServer::Views
           td(:id => "submit-container") do
             input(:type => "hidden", :id => "lt", :name => "lt", :value => @lt)
             input(:type => "hidden", :id => "service", :name => "service", :value => @service)
-            input(:type => "submit", :class => "button", :accesskey => "l", :value => _("LOGIN"), :tabindex => "4", :id => "login-submit")
+            input(:type => "submit", :class => "button", :accesskey => "l", :value => I18n.t("login_button_label"), :tabindex => "4", :id => "login-submit")
           end
         end
         tr do
@@ -117,7 +117,7 @@ module CASServer::Views
         td(:colspan => 2) do
           div(:id => "headline-container") do
             strong organization
-            text _(" Central Login")
+            text I18n.t("central_login")
           end
         end
       end

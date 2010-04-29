@@ -61,7 +61,7 @@ module CASServer
     end
   
     $LOG.debug "Detected locale is #{locale.inspect} (from #{source})"
-  
+    locale = locale.to_s
     locale.gsub!('_','-')
   
     # TODO: Need to confirm that this method of splitting the accepted

@@ -188,6 +188,8 @@ module CASServer::Controllers
         @status = 401
       end
 
+      $LOG.debug("message = #{@message.inspect}")
+
       render :login
     end
 
@@ -279,6 +281,8 @@ module CASServer::Controllers
         @message = {:type => 'confirmation', :message => I18n.t("logged_out")}
         @message[:message] +=I18n.t("click_to_continue") if @continue_url
       end
+      
+      $LOG.debug("message = #{@message.inspect}")
 
       @lt = generate_login_ticket
 

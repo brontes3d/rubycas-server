@@ -1,7 +1,7 @@
 fr:
-  login_button_label: "Log in"
-  username: "Username"
-  password: "Password"
+  login_button_label: "Connexion"
+  username: "Nom d’utilisateur"
+  password: "Mot de passe"
   missing_ticket: "Your login request did not include a login ticket. There may be a problem with the authentication system."
   previously_used_ticket: "The login ticket you provided has already been used up. Please try logging in again."
   expired_ticket: "You took too long to enter your credentials. Please try again."
@@ -18,4 +18,4 @@ fr:
   get_to_ticket_dispenser: "To generate a login ticket, you must make a POST request."
   central_login: "Central Login"
   please_wait: "Please wait..."
-  remember_me: 'Remebber me on this computer'
+  remember_me: 'Remember me on this computer'

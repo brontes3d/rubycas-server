@@ -79,14 +79,14 @@ module CASServer
     #       currently support anything like this.  
     # Try to pick a locale exactly matching the desired identifier, otherwise
     # fall back to locale without region (i.e. given "en-US; de-DE", we would
-    # first look for "en-US", then "en", then "de-DE", then "de").  
+    # first look for "en-US", then "en", then "de-DE", then "de").
     chosen_locale = nil
     locales.each do |l|
-      break if chosen_locale = available_locales.find{|a| a.to_s =~ Regexp.new("\\A#{l}\\Z", 'i') || a.to_s =~ Regexp.new("#{l}-\w*", 'i')}
+      break if chosen_locale = available_locales.find{|a| Regexp.new("\\A#{l}\\Z").match(a.to_s) || Regexp.new("#{l}-\w*").match(a.to_s)}
     end  
     chosen_locale ||= "en"  
     $LOG.debug "Chosen locale is #{chosen_locale.inspect}"  
-    return chosen_locale.to_sym
+    return chosen_locale
   end
   
 end

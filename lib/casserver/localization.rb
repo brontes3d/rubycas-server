@@ -1,10 +1,10 @@
-require 'i18n'
+
 # tell the I18n library where to find your translations
 I18n.load_path << Dir[ File.expand_path(File.join($APP_ROOT, 'config', 'locale', '*.yml')) ]
 ($CONF.i18n_files || []).each do |path|
   I18n.load_path << Dir[path]
 end
-# set default locale to something other than :en
+
 I18n.default_locale = $CONF[:default_locale]
 
 # module I18n
@@ -30,8 +30,9 @@ module CASServer
   def available_locales; AVAILABLE_LOCALES; end
   
   def service(*a)
+    I18n.locale = determine_locale  
+    $LOG.debug "Chosen locale is #{I18n.locale.inspect}"
     r = super(*a)
-    I18n.locale = determine_locale
     r
   end
   
@@ -84,9 +85,8 @@ module CASServer
     locales.each do |l|
       break if chosen_locale = available_locales.find{|a| Regexp.new("\\A#{l}\\Z").match(a.to_s) || Regexp.new("#{l}-\w*").match(a.to_s)}
     end  
-    chosen_locale ||= "en"  
-    $LOG.debug "Chosen locale is #{chosen_locale.inspect}"  
-    return chosen_locale
+    chosen_locale ||= "en"
+    return chosen_locale.to_s
   end
   
 end

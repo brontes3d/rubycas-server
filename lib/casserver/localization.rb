@@ -83,7 +83,8 @@ module CASServer
     # first look for "en-US", then "en", then "de-DE", then "de").
     chosen_locale = nil
     locales.each do |l|
-      break if chosen_locale = available_locales.find{|a| Regexp.new("\\A#{l}\\Z").match(a.to_s) || Regexp.new("#{l}-\w*").match(a.to_s)}
+      break if chosen_locale = available_locales.find{|a| Regexp.new("\\A#{l}\\Z").match(a.to_s)}
+      break if chosen_locale = available_locales.find{|a| Regexp.new("#{l}-\w*").match(a.to_s)}
     end  
     chosen_locale ||= "en"
     return chosen_locale.to_s
